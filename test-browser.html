@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA MCP Server - Local Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 AURA MCP Server - Local Testing</h1>
+    
+    <div class="container">
+        <h2>📊 Configuration</h2>
+        <label>Server URL: </label>
+        <input type="text" id="serverUrl" value="http://localhost:3000" style="width: 300px;">
+        <br>
+        <label>Test Wallet: </label>
+        <input type="text" id="testWallet" value="0x69bfD720Dd188B8BB04C4b4D24442D3c15576D10" style="width: 400px;">
+    </div>
+
+    <div class="container">
+        <h2>🧪 API Tests</h2>
+        
+        <div class="test-section">
+            <h3>1. Health Check</h3>
+            <button class="test-button" onclick="testHealth()">Test Health</button>
+            <div id="healthResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Portfolio Balance</h3>
+            <button class="test-button" onclick="testPortfolioBalance()">Get Balance</button>
+            <div id="balanceResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Portfolio Positions</h3>
+            <button class="test-button" onclick="testPortfolioPositions()">Get Positions</button>
+            <div id="positionsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. DCA Strategy Proposal</h3>
+            <button class="test-button" onclick="testDCAStrategy()">Propose DCA Strategy</button>
+            <div id="dcaResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Liquidation Guard Strategy</h3>
+            <button class="test-button" onclick="testLiquidationGuard()">Propose Liquidation Guard</button>
+            <div id="liquidationResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>6. Transaction Simulation</h3>
+            <button class="test-button" onclick="testTransactionSimulation()">Simulate Transaction</button>
+            <div id="simulationResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>7. Guard Rules</h3>
+            <button class="test-button" onclick="testGuardRules()">Set Guard Rules</button>
+            <div id="guardResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>8. System Health</h3>
+            <button class="test-button" onclick="testSystemHealth()">Check System Health</button>
+            <div id="systemResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const serverUrl = document.getElementById('serverUrl');
+        const testWallet = document.getElementById('testWallet');
+
+        async function makeRequest(url, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(url, options);
+                const result = await response.json();
+                
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: result
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            if (result.success) {
+                element.className = 'result success';
+                element.textContent = `✅ SUCCESS (${result.status})\n\n${JSON.stringify(result.data, null, 2)}`;
+            } else {
+                element.className = 'result error';
+                element.textContent = `❌ ERROR\n\n${result.error || JSON.stringify(result.data, null, 2)}`;
+            }
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.className = 'result loading';
+            element.textContent = '⏳ Loading...';
+        }
+
+        async function testHealth() {
+            showLoading('healthResult');
+            const result = await makeRequest(`${serverUrl.value}/api/health`);
+            showResult('healthResult', result);
+        }
+
+        async function testPortfolioBalance() {
+            showLoading('balanceResult');
+            const result = await makeRequest(`${serverUrl.value}/api/portfolio/balance`, 'POST', {
+                address: testWallet.value,
+                chain: 'ethereum'
+            });
+            showResult('balanceResult', result);
+        }
+
+        async function testPortfolioPositions() {
+            showLoading('positionsResult');
+            const result = await makeRequest(`${serverUrl.value}/api/portfolio/positions`, 'POST', {
+                address: testWallet.value
+            });
+            showResult('positionsResult', result);
+        }
+
+        async function testDCAStrategy() {
+            showLoading('dcaResult');
+            const result = await makeRequest(`${serverUrl.value}/api/strategy/propose`, 'POST', {
+                intent: 'dca_event_aware',
+                params: {
+                    asset: 'ETH',
+                    budgetUsd: 200,
+                    cadence: '2x/week',
+                    eventRules: {
+                        pauseOnUnlock: true,
+                        maxGasGwei: 25,
+                        boostOnDrawdownPct: 3
+                    }
+                },
+                address: testWallet.value
+            });
+            showResult('dcaResult', result);
+        }
+
+        async function testLiquidationGuard() {
+            showLoading('liquidationResult');
+            const result = await makeRequest(`${serverUrl.value}/api/strategy/propose`, 'POST', {
+                intent: 'liquidation_guard',
+                params: {
+                    protocols: ['aave', 'compound'],
+                    maxHealthFactor: 2.0,
+                    minHealthFactor: 1.3,
+                    autoRepayThreshold: 500
+                },
+                address: testWallet.value
+            });
+            showResult('liquidationResult', result);
+        }
+
+        async function testTransactionSimulation() {
+            showLoading('simulationResult');
+            const result = await makeRequest(`${serverUrl.value}/api/transaction/simulate`, 'POST', {
+                intentId: 'test-intent-123',
+                txParams: {
+                    to: '0x1234567890123456789012345678901234567890',
+                    value: '100000000000000000', // 0.1 ETH
+                    gasLimit: '150000',
+                    gasPrice: '20000000000' // 20 gwei
+                }
+            });
+            showResult('simulationResult', result);
+        }
+
+        async function testGuardRules() {
+            showLoading('guardResult');
+            const result = await makeRequest(`${serverUrl.value}/api/guard/setRules`, 'POST', {
+                rules: {
+                    risk: {
+                        maxSlippagePct: 1.0,
+                        maxGasGwei: 50
+                    },
+                    gas: {
+                        maxGasGwei: 100
+                    },
+                    route: {
+                        allowedDexes: ['uniswap', '1inch'],
+                        blockedTokens: []
+                    }
+                }
+            });
+            showResult('guardResult', result);
+        }
+
+        async function testSystemHealth() {
+            showLoading('systemResult');
+            const result = await makeRequest(`${serverUrl.value}/api/system/health`, 'GET');
+            showResult('systemResult', result);
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('🚀 AURA MCP Server Local Test Page Loaded');
+            console.log('📡 Server URL:', serverUrl.value);
+            console.log('💰 Test Wallet:', testWallet.value);
+        };
+    </script>
+</body>
+</html>

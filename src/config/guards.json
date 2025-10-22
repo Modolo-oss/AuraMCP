@@ -1,0 +1,46 @@
+{
+  "defaultRules": {
+    "risk": {
+      "maxSlippagePct": 1.0,
+      "maxGasGwei": 50,
+      "minLiquidityUsd": 10000,
+      "maxDrawdownPct": 20
+    },
+    "gas": {
+      "maxGasGwei": 100,
+      "maxGasLimit": 500000,
+      "maxTotalGasUsd": 50
+    },
+    "route": {
+      "allowedDexes": [
+        "uniswap",
+        "1inch", 
+        "sushiswap",
+        "balancer",
+        "curve"
+      ],
+      "blockedTokens": [],
+      "preferredVenues": {
+        "ETH": ["uniswap", "1inch"],
+        "USDC": ["curve", "uniswap"],
+        "USDT": ["curve", "uniswap"],
+        "DAI": ["curve", "uniswap"]
+      }
+    },
+    "deny": {
+      "blockedAddresses": [],
+      "blockedProtocols": [
+        "ponzi",
+        "honeypot",
+        "rugpull"
+      ],
+      "requireApproval": true,
+      "maxApprovalAmount": "1000000000000000000000"
+    }
+  },
+  "emergencyStop": false,
+  "maxDailyVolumeUsd": 100000,
+  "maxDailyTransactions": 50,
+  "whitelistedAddresses": [],
+  "adminAddresses": []
+}

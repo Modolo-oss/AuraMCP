@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "aura-mcp": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-http",
+        "https://your-vercel-url.vercel.app"
+      ],
+      "env": {
+        "AURA_API_URL": "https://aura.adex.network",
+        "AURA_API_KEY": "be93a4d36df2713dfb9f",
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

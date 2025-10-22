@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA Swap - DeFi Token Exchange</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .wallet-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #f7f9fc;
+      border-radius: 10px;
+      margin-bottom: 25px;
+    }
+
+    .wallet-info {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .wallet-address {
+      font-family: monospace;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .input-group select,
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .input-group select:focus,
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .swap-icon {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 1.5rem;
+    }
+
+    .quote-display {
+      background: #f7f9fc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .quote-display.show {
+      display: block;
+    }
+
+    .quote-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e1e8ed;
+    }
+
+    .quote-item:last-child {
+      border-bottom: none;
+    }
+
+    .quote-label {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .quote-value {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      display: none;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .footer {
+      text-align: center;
+      color: white;
+      margin-top: 30px;
+      opacity: 0.8;
+    }
+
+    .network-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #667eea;
+      color: white;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔄 AURA Swap</h1>
+      <p>Decentralized Token Exchange powered by AURA AI</p>
+    </div>
+
+    <div class="card">
+      <div class="wallet-section">
+        <div>
+          <div class="wallet-info" id="walletStatus">Not Connected</div>
+          <div class="wallet-address" id="walletAddress"></div>
+        </div>
+        <button class="btn btn-primary" id="connectBtn">Connect Wallet</button>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <form id="swapForm">
+        <div class="input-group">
+          <label>Network <span id="networkBadge" class="network-badge"></span></label>
+          <select id="chainId" required>
+            <option value="">Select network...</option>
+            <option value="1">Ethereum Mainnet</option>
+            <option value="8453">Base</option>
+            <option value="137">Polygon</option>
+            <option value="42161">Arbitrum</option>
+            <option value="10">Optimism</option>
+            <option value="84532">Base Sepolia (Testnet)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>From Token</label>
+          <input type="text" id="sellToken" placeholder="Token address or ETH" required />
+          <small id="sellTokenInfo" style="color: #667eea; font-size: 0.85rem; margin-top: 4px; display: none;"></small>
+        </div>
+
+        <div class="input-group">
+          <label>Amount</label>
+          <input type="text" id="sellAmount" placeholder="0.0" required />
+        </div>
+
+        <div class="swap-icon">⬇️</div>
+
+        <div class="input-group">
+          <label>To Token</label>
+          <input type="text" id="buyToken" placeholder="Token address" required />
+          <small id="buyTokenInfo" style="color: #667eea; font-size: 0.85rem; margin-top: 4px; display: none;"></small>
+        </div>
+
+        <div class="quote-display" id="quoteDisplay">
+          <h3 style="margin-bottom: 15px;">Quote Details</h3>
+          <div class="quote-item">
+            <span class="quote-label">You'll receive:</span>
+            <span class="quote-value" id="buyAmount">-</span>
+          </div>
+          <div class="quote-item">
+            <span class="quote-label">Price:</span>
+            <span class="quote-value" id="price">-</span>
+          </div>
+          <div class="quote-item">
+            <span class="quote-label">Estimated Gas:</span>
+            <span class="quote-value" id="estimatedGas">-</span>
+          </div>
+        </div>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <p style="margin-top: 10px; color: #666;">Processing...</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="getQuoteBtn" style="width: 100%; margin-bottom: 10px;">
+          Get Quote
+        </button>
+        
+        <button type="button" class="btn btn-primary" id="executeSwapBtn" style="width: 100%; display: none;">
+          Execute Swap
+        </button>
+      </form>
+    </div>
+
+    <div class="footer">
+      <p>Powered by AURA MCP Server × MetaMask</p>
+      <p style="font-size: 0.9rem; margin-top: 5px;">Secured by Guard Engine</p>
+    </div>
+  </div>
+
+  <script>
+    let web3Provider;
+    let userAddress;
+    let currentQuote;
+    let currentChainId;
+
+    const API_BASE = window.location.origin;
+
+    // DOM Elements
+    const connectBtn = document.getElementById('connectBtn');
+    const walletStatus = document.getElementById('walletStatus');
+    const walletAddress = document.getElementById('walletAddress');
+    const swapForm = document.getElementById('swapForm');
+    const getQuoteBtn = document.getElementById('getQuoteBtn');
+    const executeSwapBtn = document.getElementById('executeSwapBtn');
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    const loading = document.getElementById('loading');
+    const alert = document.getElementById('alert');
+    const networkBadge = document.getElementById('networkBadge');
+
+    // Connect Wallet
+    connectBtn.addEventListener('click', async () => {
+      if (typeof window.ethereum === 'undefined') {
+        showAlert('MetaMask is not installed. Please install MetaMask to use this app.', 'error');
+        return;
+      }
+
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        userAddress = accounts[0];
+        web3Provider = window.ethereum;
+
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        currentChainId = parseInt(chainId, 16);
+
+        walletStatus.textContent = 'Connected';
+        walletAddress.textContent = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+        connectBtn.textContent = 'Connected';
+        connectBtn.disabled = true;
+        
+        updateNetworkBadge();
+        showAlert('Wallet connected successfully!', 'success');
+
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', (accounts) => {
+          if (accounts.length === 0) {
+            resetWallet();
+          } else {
+            userAddress = accounts[0];
+            walletAddress.textContent = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
+          }
+        });
+
+        // Listen for chain changes
+        window.ethereum.on('chainChanged', (chainId) => {
+          currentChainId = parseInt(chainId, 16);
+          updateNetworkBadge();
+        });
+
+      } catch (error) {
+        console.error('Failed to connect wallet:', error);
+        showAlert('Failed to connect wallet: ' + error.message, 'error');
+      }
+    });
+
+    function updateNetworkBadge() {
+      const networkNames = {
+        1: 'Ethereum',
+        8453: 'Base',
+        137: 'Polygon',
+        42161: 'Arbitrum',
+        10: 'Optimism',
+        84532: 'Base Sepolia'
+      };
+      networkBadge.textContent = networkNames[currentChainId] || `Chain ${currentChainId}`;
+    }
+
+    function resetWallet() {
+      userAddress = null;
+      walletStatus.textContent = 'Not Connected';
+      walletAddress.textContent = '';
+      connectBtn.textContent = 'Connect Wallet';
+      connectBtn.disabled = false;
+    }
+
+    // Get Quote
+    swapForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!userAddress) {
+        showAlert('Please connect your wallet first', 'warning');
+        return;
+      }
+
+      const chainId = parseInt(document.getElementById('chainId').value);
+      const sellToken = document.getElementById('sellToken').value.trim();
+      const buyToken = document.getElementById('buyToken').value.trim();
+      const sellAmount = document.getElementById('sellAmount').value;
+
+      if (!chainId || !sellToken || !buyToken || !sellAmount) {
+        showAlert('Please fill in all fields', 'warning');
+        return;
+      }
+
+      showLoading(true);
+      hideAlert();
+      executeSwapBtn.style.display = 'none';
+      quoteDisplay.classList.remove('show');
+
+      try {
+        const response = await fetch(`${API_BASE}/api/swap/prepare`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chainId,
+            sellToken,
+            buyToken,
+            sellAmount,
+            taker: userAddress,
+            slippagePercent: 1.0
+          })
+        });
+
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error?.message || 'Failed to get quote');
+        }
+
+        currentQuote = result.data;
+        await displayQuote(result.data.quote);
+        
+        executeSwapBtn.style.display = 'block';
+        showAlert('Quote received! Review and execute swap below.', 'success');
+
+      } catch (error) {
+        console.error('Quote error:', error);
+        showAlert('Failed to get quote: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    });
+
+    // Execute Swap
+    executeSwapBtn.addEventListener('click', async () => {
+      if (!currentQuote || !userAddress) {
+        showAlert('No quote available or wallet not connected', 'error');
+        return;
+      }
+
+      const selectedChainId = parseInt(document.getElementById('chainId').value);
+      
+      // Check if user is on correct network
+      if (currentChainId !== selectedChainId) {
+        showAlert(`Please switch to the correct network in MetaMask (Chain ID: ${selectedChainId})`, 'warning');
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x' + selectedChainId.toString(16) }],
+          });
+        } catch (error) {
+          console.error('Failed to switch network:', error);
+          return;
+        }
+      }
+
+      showLoading(true);
+      hideAlert();
+
+      try {
+        const tx = currentQuote.transaction;
+
+        // Send transaction via MetaMask
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: userAddress,
+            to: tx.to,
+            data: tx.data,
+            value: '0x' + parseInt(tx.value).toString(16),
+            gas: tx.estimatedGas ? '0x' + parseInt(tx.estimatedGas).toString(16) : undefined
+          }]
+        });
+
+        showAlert(`Swap submitted! Transaction hash: ${txHash}`, 'success');
+        
+        // Reset form
+        swapForm.reset();
+        quoteDisplay.classList.remove('show');
+        executeSwapBtn.style.display = 'none';
+        currentQuote = null;
+
+      } catch (error) {
+        console.error('Swap execution error:', error);
+        showAlert('Swap failed: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    });
+
+    async function displayQuote(quote) {
+      // Fetch token decimals for accurate conversion
+      const chainId = document.getElementById('chainId').value;
+      
+      let decimals = 18; // Default to 18
+      
+      // Try to get actual decimals from metadata using buyToken from quote
+      if (/^0x[a-fA-F0-9]{40}$/.test(quote.buyToken)) {
+        try {
+          const metaResponse = await fetch(`${API_BASE}/api/tokens/metadata?address=${quote.buyToken}&chainId=${chainId}`);
+          const metaResult = await metaResponse.json();
+          if (metaResult.success) {
+            decimals = metaResult.data.decimals;
+          }
+        } catch (e) {
+          console.warn('Could not fetch decimals, using default 18');
+        }
+      }
+      
+      // Convert from smallest unit to human readable
+      let buyAmountFormatted;
+      try {
+        const buyAmountNum = parseFloat(quote.buyAmount);
+        const divisor = Math.pow(10, decimals);
+        buyAmountFormatted = (buyAmountNum / divisor).toFixed(6);
+      } catch (e) {
+        console.error('Error formatting buyAmount:', e);
+        buyAmountFormatted = quote.buyAmount;
+      }
+      
+      // Calculate human-readable price
+      const sellAmount = document.getElementById('sellAmount').value;
+      const sellAmountNum = parseFloat(sellAmount);
+      const buyAmountNum = parseFloat(buyAmountFormatted);
+      
+      let priceFormatted = '0';
+      if (sellAmountNum > 0 && buyAmountNum > 0) {
+        // Price = how much you get per 1 unit sold
+        const priceValue = buyAmountNum / sellAmountNum;
+        priceFormatted = priceValue.toLocaleString('en-US', { 
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 6 
+        });
+      }
+      
+      document.getElementById('buyAmount').textContent = buyAmountFormatted;
+      document.getElementById('price').textContent = priceFormatted;
+      document.getElementById('estimatedGas').textContent = currentQuote.transaction.estimatedGas || 'N/A';
+      
+      quoteDisplay.classList.add('show');
+    }
+
+    function showLoading(show) {
+      loading.classList.toggle('show', show);
+      getQuoteBtn.disabled = show;
+      executeSwapBtn.disabled = show;
+    }
+
+    function showAlert(message, type) {
+      alert.textContent = message;
+      alert.className = `alert alert-${type} show`;
+    }
+
+    function hideAlert() {
+      alert.classList.remove('show');
+    }
+
+    // Fetch token metadata when user inputs an address
+    async function fetchTokenMetadata(address, infoElementId) {
+      const infoElement = document.getElementById(infoElementId);
+      const chainId = document.getElementById('chainId').value;
+      
+      // Check if it's an address (starts with 0x and has 42 chars)
+      if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+        infoElement.style.display = 'none';
+        return;
+      }
+
+      if (!chainId) {
+        infoElement.textContent = '⚠️ Select network first';
+        infoElement.style.display = 'block';
+        infoElement.style.color = '#ff9800';
+        return;
+      }
+
+      try {
+        infoElement.textContent = '⏳ Fetching token info...';
+        infoElement.style.display = 'block';
+        infoElement.style.color = '#667eea';
+
+        const response = await fetch(`${API_BASE}/api/tokens/metadata?address=${address}&chainId=${chainId}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const { symbol, name, decimals } = result.data;
+          infoElement.textContent = `✓ ${symbol} - ${name} (${decimals} decimals)`;
+          infoElement.style.color = '#4caf50';
+        } else {
+          infoElement.textContent = `⚠️ ${result.error?.message || 'Unknown token'}`;
+          infoElement.style.color = '#ff9800';
+        }
+      } catch (error) {
+        console.error('Token metadata fetch error:', error);
+        infoElement.textContent = '⚠️ Failed to fetch token info';
+        infoElement.style.color = '#ff9800';
+      }
+    }
+
+    // Add event listeners for token inputs
+    let sellTokenTimeout;
+    document.getElementById('sellToken').addEventListener('input', function() {
+      clearTimeout(sellTokenTimeout);
+      sellTokenTimeout = setTimeout(() => {
+        if (this.value) {
+          fetchTokenMetadata(this.value, 'sellTokenInfo');
+        }
+      }, 500); // Debounce for 500ms
+    });
+
+    let buyTokenTimeout;
+    document.getElementById('buyToken').addEventListener('input', function() {
+      clearTimeout(buyTokenTimeout);
+      buyTokenTimeout = setTimeout(() => {
+        if (this.value) {
+          fetchTokenMetadata(this.value, 'buyTokenInfo');
+        }
+      }, 500); // Debounce for 500ms
+    });
+
+    // Re-fetch metadata when chain changes
+    document.getElementById('chainId').addEventListener('change', function() {
+      const sellToken = document.getElementById('sellToken').value;
+      const buyToken = document.getElementById('buyToken').value;
+      
+      if (sellToken) fetchTokenMetadata(sellToken, 'sellTokenInfo');
+      if (buyToken) fetchTokenMetadata(buyToken, 'buyTokenInfo');
+    });
+
+    // Auto-fill ETH for convenience
+    document.getElementById('sellToken').addEventListener('focus', function() {
+      if (!this.value) {
+        this.placeholder = 'e.g., ETH or 0xA0b86...';
+      }
+    });
+
+    document.getElementById('buyToken').addEventListener('focus', function() {
+      if (!this.value) {
+        this.placeholder = 'e.g., USDC or 0x833...';
+      }
+    });
+
+    // Check for pre-loaded transaction from URL parameter (?tx=abc123)
+    async function checkForPreloadedTransaction() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const txId = urlParams.get('tx');
+      
+      if (!txId) return;
+
+      showLoading(true);
+      showAlert('Loading transaction from link...', 'info');
+
+      try {
+        const response = await fetch(`${API_BASE}/api/swap/get-prepared/${txId}`);
+        const result = await response.json();
+
+        if (!result.success) {
+          showAlert(result.error?.message || 'Transaction not found or expired', 'error');
+          showLoading(false);
+          return;
+        }
+
+        const tx = result.data;
+        
+        // Connect wallet if not connected
+        if (!userAddress) {
+          showAlert('Please connect your wallet to sign this transaction', 'warning');
+          connectBtn.click();
+          
+          // Wait for wallet connection
+          await new Promise((resolve) => {
+            const checkConnection = setInterval(() => {
+              if (userAddress) {
+                clearInterval(checkConnection);
+                resolve();
+              }
+            }, 500);
+          });
+        }
+
+        // Fill form with transaction details
+        document.getElementById('chainId').value = tx.chainId;
+        document.getElementById('sellToken').value = tx.fromToken;
+        document.getElementById('buyToken').value = tx.toToken;
+        document.getElementById('sellAmount').value = tx.amount;
+
+        updateNetworkBadge();
+        
+        // Store transaction data
+        currentQuote = tx.txData;
+
+        // Display quote
+        await displayQuote(currentQuote.quote);
+        
+        showAlert(`Transaction loaded! Review details and click "Execute Swap" to sign`, 'success');
+        executeSwapBtn.style.display = 'block';
+        executeSwapBtn.textContent = 'Sign & Execute Swap';
+        showLoading(false);
+
+        // Auto-trigger execute swap after 2 seconds if user didn't click
+        setTimeout(() => {
+          if (executeSwapBtn.style.display === 'block') {
+            executeSwapBtn.click();
+          }
+        }, 2000);
+
+      } catch (error) {
+        console.error('Failed to load prepared transaction:', error);
+        showAlert('Failed to load transaction. Please try again.', 'error');
+        showLoading(false);
+      }
+    }
+
+    // Run on page load
+    checkForPreloadedTransaction();
+  </script>
+</body>
+</html>

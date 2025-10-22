@@ -1,0 +1,38 @@
+{
+  "name": "@aura/mcp-server",
+  "version": "1.0.0",
+  "description": "AURA MCP Server - Bridge LLMs with AURA API and EVM for on-chain intelligence",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/http-server.js",
+    "dev": "tsx src/http-server.ts",
+    "build": "tsc"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "aura",
+    "defi",
+    "blockchain",
+    "ethereum"
+  ],
+  "mcp": {
+    "server": {
+      "command": "node",
+      "args": ["dist/http-server.js"],
+      "env": {
+        "AURA_API_URL": "https://aura.adex.network",
+        "AURA_API_KEY": "be93a4d36df2713dfb9f"
+      }
+    }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "fastify": "^4.28.1",
+    "axios": "^1.7.2",
+    "ethers": "^6.13.0",
+    "winston": "^3.18.3",
+    "zod": "^3.24.2"
+  }
+}

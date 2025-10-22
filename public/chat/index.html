@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraGPT - DeFi AI Assistant</title>
+  <link rel="stylesheet" href="/chat/chat.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="chat-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-section">
+          <span class="logo-text">AURA</span>
+          <span class="logo-subtitle">CHATBOT</span>
+        </div>
+        <button class="new-chat-btn" id="new-chat-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 4a.5.5 0 01.5.5v3h3a.5.5 0 010 1h-3v3a.5.5 0 01-1 0v-3h-3a.5.5 0 010-1h3v-3A.5.5 0 018 4z"/>
+          </svg>
+          New Chat
+        </button>
+      </div>
+
+      <div class="chat-history">
+        <div class="history-section">
+          <div class="history-label">YESTERDAY</div>
+          <div class="history-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"/>
+            </svg>
+            Portfolio analysis for wallet
+          </div>
+          <div class="history-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"/>
+            </svg>
+            ETH to USDC swap quote
+          </div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-label">LAST WEEK</div>
+          <div class="history-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"/>
+            </svg>
+            DCA strategy proposal
+          </div>
+          <div class="history-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"/>
+            </svg>
+            Risk analysis check
+          </div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-label">LAST MONTH</div>
+          <div class="history-item">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1h-6zm0 3a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-11z"/>
+            </svg>
+            Token price comparison
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="upgrade-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 1.5a.5.5 0 01.5.5v5.793l2.146-2.147a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L7.5 7.793V2a.5.5 0 01.5-.5z"/>
+            <path d="M3 10a.5.5 0 01.5.5v3a.5.5 0 00.5.5h8a.5.5 0 00.5-.5v-3a.5.5 0 011 0v3a1.5 1.5 0 01-1.5 1.5H4A1.5 1.5 0 012.5 13.5v-3A.5.5 0 013 10z"/>
+          </svg>
+          All Tools FREE
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="chat-header">
+        <div class="model-selector">
+          <button class="model-btn active" data-model="gpt4">GPT-4</button>
+          <button class="model-btn" data-model="claude">Claude</button>
+          <button class="model-btn" data-model="gemini">Gemini</button>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn theme-toggle">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="connect-wallet">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="messages-container" id="messages">
+        <div class="empty-state">
+          <div class="sparkle-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M24 8L26 14L32 16L26 18L24 24L22 18L16 16L22 14L24 8Z" fill="#2d4a3e"/>
+              <path d="M32 24L33 27L36 28L33 29L32 32L31 29L28 28L31 27L32 24Z" fill="#4a6b5a"/>
+              <circle cx="12" cy="36" r="2" fill="#6b8570"/>
+            </svg>
+          </div>
+          <h2>Ask AURA Engine anything</h2>
+          
+          <div class="suggestions">
+            <p class="suggestions-label">Suggestions on what to ask AURA Engine</p>
+            <div class="suggestion-chips">
+              <button class="suggestion-chip">What can AURA Engine help me with?</button>
+              <button class="suggestion-chip">Check my DeFi portfolio balance</button>
+              <button class="suggestion-chip">What's the current price of ETH?</button>
+              <button class="suggestion-chip">Help me swap tokens safely</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <textarea 
+            id="message-input" 
+            placeholder="Ask AURA Engine about DeFi, portfolios, or token swaps..." 
+            rows="1"
+            autocomplete="off"
+          ></textarea>
+          <button id="send-btn" class="send-btn" disabled>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2 4l16 6-16 6V4zm2 10.472V13l8-3-8-3V5.528L16.472 10 4 14.472z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <template id="typing-indicator">
+    <div class="message assistant-message typing-indicator">
+      <div class="message-avatar">A</div>
+      <div class="message-content">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="/chat/chat.js"></script>
+</body>
+</html>
