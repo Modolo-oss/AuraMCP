@@ -13,7 +13,6 @@ import { PriceTools } from '../tools/price.js'
 import { PremiumPortfolioTools } from '../tools/premium-portfolio.js'
 import { PremiumStrategyTools } from '../tools/premium-strategy.js'
 import { requiresPayment, getPaymentAmount } from '../config/pricing.js'
-import { generateInvoice, getInvoice } from '../services/invoice.js'
 import winston from 'winston'
 
 const logger = winston.createLogger({
